@@ -1,31 +1,29 @@
 # ProofSnap.AI
 
-ProofSnap.AI is a web application that helps users verify the authenticity of screenshots and images, extract text using OCR, and generate detailed verification reports.
+ProofSnap.AI is an advanced web application for verifying the authenticity of screenshots and images, extracting text using OCR, and generating detailed verification reports.
 
 ## Features
 
-- 📸 Upload screenshots and images (JPG, PNG)
-- 🔍 Basic image tampering detection
-- 📝 Text extraction using OCR (Tesseract.js)
-- 📄 Generate and download PDF verification reports
-- 💻 Clean, responsive UI built with Next.js and Tailwind CSS
+- 🔍 **Image Verification**: Detect potential tampering in screenshots and images
+- 📝 **OCR Text Extraction**: Extract text from images using Tesseract.js
+- 📊 **Detailed Reports**: Generate comprehensive verification reports
+- 📱 **Responsive Design**: Works seamlessly on desktop and mobile devices
+- 📄 **PDF Export**: Download verification reports in PDF format
 
 ## Tech Stack
 
-- **Frontend Framework**: Next.js 14 (App Router)
+- **Framework**: Next.js 14 (App Router)
 - **Styling**: Tailwind CSS
-- **OCR Engine**: Tesseract.js
+- **OCR**: Tesseract.js
 - **PDF Generation**: jsPDF
-- **Image Processing**: Browser's native APIs
-- **State Management**: React Hooks + SessionStorage
-- **Deployment**: Vercel (recommended)
+- **Analytics**: Vercel Web Analytics
 
 ## Getting Started
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/proofsnap-ai.git
-   cd proofsnap-ai
+   git clone https://github.com/Barsaan/ProofSnap.git
+   cd ProofSnap
    ```
 
 2. Install dependencies:
@@ -43,26 +41,14 @@ ProofSnap.AI is a web application that helps users verify the authenticity of sc
 ## Project Structure
 
 ```
-src/
-├── app/                    # Next.js app directory
-│   ├── page.tsx           # Home page
-│   ├── analyze/           # Analysis page
-│   └── report/            # Report page
-├── components/            # React components
-│   ├── ImageUploader.tsx
-│   ├── OCRDisplay.tsx
-│   ├── VerificationCard.tsx
-│   └── PDFExportButton.tsx
-└── styles/               # Global styles
+ProofSnap/
+├── public/              # Static assets
+├── src/
+│   ├── app/            # Next.js app router pages
+│   ├── components/     # React components
+│   └── utils/          # Utility functions
+└── scripts/            # Build and utility scripts
 ```
-
-## Usage
-
-1. Visit the home page and upload an image
-2. Wait for OCR processing to complete
-3. Review the extracted text
-4. Click "Verify Now" to generate a report
-5. Download the PDF report if needed
 
 ## Contributing
 
@@ -71,3 +57,14 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Author
+
+- Barsaan ([@Barsaan](https://github.com/Barsaan))
+
+## Acknowledgments
+
+- [Next.js](https://nextjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Tesseract.js](https://github.com/naptha/tesseract.js)
+- [jsPDF](https://github.com/MrRio/jsPDF)
