@@ -6,12 +6,16 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ProofSnap.AI - Verify Screenshots & Extract Text",
-  description: "Advanced tool for detecting image tampering, extracting text from screenshots, and generating detailed verification reports. Perfect for verifying WhatsApp chats, social media posts, and document screenshots.",
+  title: "ProofSnap.AI - Image Verification Tool",
+  description: "Verify the authenticity of images and detect potential tampering using advanced AI analysis.",
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/apple-icon.png',
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/icon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+      { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+    ],
   },
   manifest: '/site.webmanifest',
 };
