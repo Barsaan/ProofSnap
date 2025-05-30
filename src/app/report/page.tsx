@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import VerificationCard from '@/components/VerificationCard';
@@ -26,7 +26,7 @@ interface VerificationResult {
   };
 }
 
-export default function ReportPage() {
+function ReportContent() {
   const searchParams = useSearchParams();
   const [imageUrl, setImageUrl] = useState<string>('');
   const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
@@ -109,5 +109,17 @@ export default function ReportPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function ReportPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+      </div>
+    }>
+      <ReportContent />
+    </Suspense>
   );
 } 
