@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { createWorker } from 'tesseract.js';
 
 interface OCRDisplayProps {
   text: string;
@@ -9,23 +8,6 @@ interface OCRDisplayProps {
 
 export default function OCRDisplay({ text }: OCRDisplayProps) {
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const performOCR = async (imageUrl: string) => {
-    try {
-      setIsProcessing(true);
-      const worker = await createWorker();
-      await worker.loadLanguage('eng');
-      await worker.initialize('eng');
-      const { data: { text } } = await worker.recognize(imageUrl);
-      await worker.terminate();
-      return text;
-    } catch (error) {
-      console.error('OCR Error:', error);
-      return '';
-    } finally {
-      setIsProcessing(false);
-    }
-  };
 
   return (
     <div className="bg-white rounded-lg shadow p-6">

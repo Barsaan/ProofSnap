@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 
 interface ImageUploaderProps {
   onImageUpload: (file: File) => void;

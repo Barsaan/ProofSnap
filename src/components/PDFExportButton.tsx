@@ -16,14 +16,12 @@ interface PDFExportButtonProps {
     };
   };
   ocrText: string;
-  imageUrl: string;
 }
 
 export default function PDFExportButton({
   reportId,
   verificationResult,
   ocrText,
-  imageUrl,
 }: PDFExportButtonProps) {
   const [isGenerating, setIsGenerating] = useState(false);
 

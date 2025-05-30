@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import VerificationCard from '@/components/VerificationCard';
-import OCRDisplay from '@/components/OCRDisplay';
 import PDFExportButton from '@/components/PDFExportButton';
 import { verifyImage } from '@/utils/imageVerification';
 
@@ -20,12 +19,10 @@ interface VerificationResult {
 }
 
 export default function ReportPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [imageUrl, setImageUrl] = useState<string>('');
   const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
   const [extractedText, setExtractedText] = useState<string>('');
-  const [isVerifying, setIsVerifying] = useState(true);
   const [reportId] = useState(() => {
     // Generate a unique report ID using timestamp and random string
     const timestamp = Date.now().toString(36);
