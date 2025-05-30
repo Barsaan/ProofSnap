@@ -14,6 +14,12 @@ interface PDFExportButtonProps {
       format: string;
       size: number;
     };
+    analysis: {
+      compressionScore: number;
+      pixelConsistency: number;
+      textAlignment: number;
+      metadataScore: number;
+    };
   };
   ocrText: string;
 }
@@ -52,10 +58,17 @@ export default function PDFExportButton({
       doc.text(`Format: ${verificationResult.metadata.format}`, 20, 100);
       doc.text(`Size: ${(verificationResult.metadata.size / 1024).toFixed(2)} KB`, 20, 110);
       
+      // Add analysis details
+      doc.text('Analysis Details:', 20, 130);
+      doc.text(`Compression Score: ${verificationResult.analysis.compressionScore}%`, 20, 140);
+      doc.text(`Pixel Consistency: ${verificationResult.analysis.pixelConsistency}%`, 20, 150);
+      doc.text(`Text Alignment: ${verificationResult.analysis.textAlignment}%`, 20, 160);
+      doc.text(`Metadata Score: ${verificationResult.analysis.metadataScore}%`, 20, 170);
+      
       // Add OCR text
-      doc.text('Extracted Text:', 20, 130);
+      doc.text('Extracted Text:', 20, 190);
       const splitText = doc.splitTextToSize(ocrText, 170);
-      doc.text(splitText, 20, 140);
+      doc.text(splitText, 20, 200);
       
       // Save the PDF
       doc.save(`proofsnap-report-${reportId}.pdf`);

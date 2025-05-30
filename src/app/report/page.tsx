@@ -7,14 +7,22 @@ import VerificationCard from '@/components/VerificationCard';
 import PDFExportButton from '@/components/PDFExportButton';
 import { verifyImage } from '@/utils/imageVerification';
 
+interface ImageMetadata {
+  width: number;
+  height: number;
+  format: string;
+  size: number;
+}
+
 interface VerificationResult {
   isTampered: boolean;
   confidence: number;
-  details: {
-    metadataScore: number;
+  metadata: ImageMetadata;
+  analysis: {
     compressionScore: number;
-    pixelScore: number;
-    textScore: number;
+    pixelConsistency: number;
+    textAlignment: number;
+    metadataScore: number;
   };
 }
 
@@ -37,7 +45,9 @@ export default function ReportPage() {
       setImageUrl(image);
       setExtractedText(text || '');
       // Perform verification
-      verifyImage(image).then(setVerificationResult);
+      verifyImage(image).then((result) => {
+        setVerificationResult(result);
+      });
     }
   }, [searchParams]);
 
@@ -57,12 +67,13 @@ export default function ReportPage() {
             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Verification Report
             </h1>
-            <PDFExportButton
-              reportId={reportId}
-              verificationResult={verificationResult}
-              ocrText={extractedText}
-              imageUrl={imageUrl}
-            />
+            {verificationResult && (
+              <PDFExportButton
+                reportId={reportId}
+                verificationResult={verificationResult}
+                ocrText={extractedText}
+              />
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
