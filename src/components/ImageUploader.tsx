@@ -10,8 +10,22 @@ interface ImageUploaderProps {
 
 export default function ImageUploader({ onImageUpload }: ImageUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
-  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+
+  const handleFile = useCallback((file: File) => {
+    if (!file.type.startsWith('image/')) {
+      setError('Please upload an image file (JPG, PNG)');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      setError('File size should be less than 5MB');
+      return;
+    }
+
+    setError(null);
+    onImageUpload(file);
+  }, [onImageUpload]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -23,48 +37,22 @@ export default function ImageUploader({ onImageUpload }: ImageUploaderProps) {
     setIsDragging(false);
   }, []);
 
-  const validateFile = (file: File): boolean => {
-    const validTypes = ['image/jpeg', 'image/png'];
-    const maxSize = 5 * 1024 * 1024; // 5MB
-
-    if (!validTypes.includes(file.type)) {
-      alert('Please upload a JPG or PNG file');
-      return false;
-    }
-
-    if (file.size > maxSize) {
-      alert('File size must be less than 5MB');
-      return false;
-    }
-
-    return true;
-  };
-
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-
+    
     const file = e.dataTransfer.files[0];
-    if (file && validateFile(file)) {
+    if (file) {
       handleFile(file);
     }
-  }, []);
+  }, [handleFile]);
 
   const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && validateFile(file)) {
+    if (file) {
       handleFile(file);
     }
-  }, []);
-
-  const handleFile = (file: File) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreview(reader.result as string);
-      onImageUpload(file);
-    };
-    reader.readAsDataURL(file);
-  };
+  }, [handleFile]);
 
   return (
     <div className="w-full max-w-2xl mx-auto">
@@ -77,33 +65,30 @@ export default function ImageUploader({ onImageUpload }: ImageUploaderProps) {
       >
         <input
           type="file"
-          accept="image/jpeg,image/png"
+          accept="image/*"
           onChange={handleFileInput}
           className="hidden"
           id="file-upload"
         />
         <label htmlFor="file-upload" className="cursor-pointer">
-          {preview ? (
-            <div className="relative w-full h-64">
-              <Image
-                src={preview}
-                alt="Preview"
-                fill
-                className="object-contain"
-              />
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="text-6xl">📸</div>
-              <p className="text-lg text-gray-600">
-                Drag and drop your screenshot here, or click to select
+          <div className="space-y-4">
+            <div className="text-6xl">📸</div>
+            <div>
+              <p className="text-lg font-medium text-gray-900">
+                Drag and drop your image here
               </p>
               <p className="text-sm text-gray-500">
-                Supports JPG and PNG files up to 5MB
+                or click to select a file
               </p>
             </div>
-          )}
+            <p className="text-xs text-gray-500">
+              Supported formats: JPG, PNG (max 5MB)
+            </p>
+          </div>
         </label>
+        {error && (
+          <p className="mt-4 text-sm text-red-600">{error}</p>
+        )}
       </div>
     </div>
   );

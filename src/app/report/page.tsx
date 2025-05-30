@@ -1,17 +1,30 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import VerificationCard from '@/components/VerificationCard';
+import OCRDisplay from '@/components/OCRDisplay';
 import PDFExportButton from '@/components/PDFExportButton';
 import { verifyImage } from '@/utils/imageVerification';
 
+interface VerificationResult {
+  isTampered: boolean;
+  confidence: number;
+  details: {
+    metadataScore: number;
+    compressionScore: number;
+    pixelScore: number;
+    textScore: number;
+  };
+}
+
 export default function ReportPage() {
   const router = useRouter();
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [ocrText, setOcrText] = useState<string>('');
-  const [verificationResult, setVerificationResult] = useState<any>(null);
+  const searchParams = useSearchParams();
+  const [imageUrl, setImageUrl] = useState<string>('');
+  const [verificationResult, setVerificationResult] = useState<VerificationResult | null>(null);
+  const [extractedText, setExtractedText] = useState<string>('');
   const [isVerifying, setIsVerifying] = useState(true);
   const [reportId] = useState(() => {
     // Generate a unique report ID using timestamp and random string
@@ -21,53 +34,21 @@ export default function ReportPage() {
   });
 
   useEffect(() => {
-    const storedImage = sessionStorage.getItem('uploadedImage');
-    const storedOcrText = sessionStorage.getItem('ocrText');
-
-    if (!storedImage || !storedOcrText) {
-      router.push('/');
-      return;
+    const image = searchParams.get('image');
+    const text = searchParams.get('text');
+    if (image) {
+      setImageUrl(image);
+      setExtractedText(text || '');
+      // Perform verification
+      verifyImage(image).then(setVerificationResult);
     }
+  }, [searchParams]);
 
-    setImageUrl(storedImage);
-    setOcrText(storedOcrText);
-
-    // Perform image verification
-    const performVerification = async () => {
-      try {
-        setIsVerifying(true);
-        const result = await verifyImage(storedImage);
-        setVerificationResult(result);
-      } catch (error) {
-        console.error('Verification error:', error);
-      } finally {
-        setIsVerifying(false);
-      }
-    };
-
-    performVerification();
-  }, [router]);
-
-  if (!imageUrl || !verificationResult) {
+  if (!imageUrl) {
     return (
-      <main className="min-h-screen bg-gray-50 py-12">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <div className="text-center">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
-                {isVerifying ? 'Analyzing Image...' : 'Loading Report...'}
-              </h1>
-              {isVerifying && (
-                <div className="w-full max-w-md mx-auto">
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
-                    <div className="bg-blue-600 h-2.5 rounded-full animate-pulse"></div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </main>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">No image selected</p>
+      </div>
     );
   }
 
@@ -82,7 +63,7 @@ export default function ReportPage() {
             <PDFExportButton
               reportId={reportId}
               verificationResult={verificationResult}
-              ocrText={ocrText}
+              ocrText={extractedText}
               imageUrl={imageUrl}
             />
           </div>
@@ -103,16 +84,18 @@ export default function ReportPage() {
                   Extracted Text
                 </h2>
                 <pre className="text-sm text-gray-700 whitespace-pre-wrap max-h-48 overflow-y-auto">
-                  {ocrText || 'No text detected'}
+                  {extractedText || 'No text detected'}
                 </pre>
               </div>
             </div>
 
             <div>
-              <VerificationCard
-                result={verificationResult}
-                reportId={reportId}
-              />
+              {verificationResult && (
+                <VerificationCard
+                  result={verificationResult}
+                  reportId={reportId}
+                />
+              )}
             </div>
           </div>
         </div>

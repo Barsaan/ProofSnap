@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 interface PDFExportButtonProps {
   reportId: string;
@@ -33,50 +32,33 @@ export default function PDFExportButton({
       setIsGenerating(true);
 
       const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const margin = 20;
-
+      
       // Add title
       doc.setFontSize(20);
-      doc.text('ProofSnap.AI Verification Report', margin, 20);
-
+      doc.text('ProofSnap.AI Verification Report', 20, 20);
+      
       // Add report ID
       doc.setFontSize(12);
-      doc.text(`Report ID: ${reportId}`, margin, 30);
-
-      // Add verification status
+      doc.text(`Report ID: ${reportId}`, 20, 30);
+      
+      // Add verification result
       doc.setFontSize(14);
-      doc.text(
-        `Status: ${verificationResult.isTampered ? 'Potential Tampering Detected' : 'No Tampering Detected'}`,
-        margin,
-        40
-      );
-
+      doc.text('Verification Results:', 20, 40);
+      doc.setFontSize(12);
+      doc.text(`Status: ${verificationResult.isTampered ? 'Tampered' : 'Authentic'}`, 20, 50);
+      doc.text(`Confidence: ${verificationResult.confidence}%`, 20, 60);
+      
       // Add metadata
-      doc.setFontSize(12);
-      doc.text('Image Metadata:', margin, 50);
-      doc.text(`Dimensions: ${verificationResult.metadata.width} x ${verificationResult.metadata.height}px`, margin, 60);
-      doc.text(`Format: ${verificationResult.metadata.format.toUpperCase()}`, margin, 70);
-      doc.text(`File Size: ${(verificationResult.metadata.size / 1024).toFixed(2)} KB`, margin, 80);
-      doc.text(`Confidence: ${verificationResult.confidence}%`, margin, 90);
-
+      doc.text('Image Metadata:', 20, 80);
+      doc.text(`Dimensions: ${verificationResult.metadata.width}x${verificationResult.metadata.height}`, 20, 90);
+      doc.text(`Format: ${verificationResult.metadata.format}`, 20, 100);
+      doc.text(`Size: ${(verificationResult.metadata.size / 1024).toFixed(2)} KB`, 20, 110);
+      
       // Add OCR text
-      doc.setFontSize(12);
-      doc.text('Extracted Text:', margin, 110);
-      const splitText = doc.splitTextToSize(ocrText, pageWidth - 2 * margin);
-      doc.text(splitText, margin, 120);
-
-      // Add image
-      const img = new Image();
-      img.src = imageUrl;
-      await new Promise((resolve) => {
-        img.onload = resolve;
-      });
-
-      const imgWidth = pageWidth - 2 * margin;
-      const imgHeight = (img.height * imgWidth) / img.width;
-      doc.addImage(img, 'JPEG', margin, 150, imgWidth, imgHeight);
-
+      doc.text('Extracted Text:', 20, 130);
+      const splitText = doc.splitTextToSize(ocrText, 170);
+      doc.text(splitText, 20, 140);
+      
       // Save the PDF
       doc.save(`proofsnap-report-${reportId}.pdf`);
     } catch (error) {
